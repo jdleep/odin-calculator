@@ -1,0 +1,47 @@
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0 auto;
+    align-items: center;
+    justify-content: center;
+    /* background-color: red; */
+}
+
+.calculator {
+    background-color: red;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 300px;
+}
+
+.calculated-value {
+    background-color: lightblue;
+    flex-basis: 100%;
+}
+
+Div > button {
+    width: 25%;
+    aspect-ratio: 1;
+}
+
+.zero {
+    flex-basis: 50%;
+    aspect-ratio: 0;
+}
+
+.digit,
+.decimal {
+    background-color: lightgreen;
+}
+
+.operator {
+    background-color: lightcoral;
+}
+
+.clear,
+.sign,
+.percent {
+    background-color: lavender;
+}

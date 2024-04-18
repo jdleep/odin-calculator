@@ -10,15 +10,19 @@ interface BinaryOps {
 
 class Calculator {
     methods: BinaryOps = {
-        // '+': (a: number, b: number) => a + b,
-        // '-': (a: number, b: number) => a - b,
-        // '*': (a: number, b: number) => a * b,
+        '+': (a: number, b: number) => a + b,
+        '-': (a: number, b: number) => a - b,
+        '*': (a: number, b: number) => a * b,
+        '/': (a: number, b: number) => a / b
     }
 
     operate(a: number, b: string, c: number) {
-        return this.methods[b](a, c);
+        if (this.methods[b]) {
+            return this.methods[b](a, c);
+        } else {
+            throw new Error("Operator not found in calculator");
+        }
     }
 }
-
 
 export { Calculator }

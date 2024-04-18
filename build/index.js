@@ -11,9 +11,15 @@ class Calculator {
         '+': (a, b) => a + b,
         '-': (a, b) => a - b,
         '*': (a, b) => a * b,
+        '/': (a, b) => a / b
     };
     operate(a, b, c) {
-        return this.methods[b](a, c);
+        if (this.methods[b]) {
+            return this.methods[b](a, c);
+        }
+        else {
+            throw new Error("Operator not found in calculator");
+        }
     }
 }
 exports.Calculator = Calculator;
