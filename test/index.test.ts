@@ -79,11 +79,10 @@ describe('Calculator digit entry', () => {
         calcDigit.calculate('2');
         calcDigit.calculate('3');
         expect(calcDigit.calculate('4')).toEqual({
-            stage: 'OPERAND1',
             operand1: '1234',
             operator: '',
             operand2: '',
-            displayValue: '1234'
+            calculatedValue: '1234'
         });
     });
 
@@ -92,11 +91,10 @@ describe('Calculator digit entry', () => {
         calcDigit.calculate('4');
         calcDigit.calculate('8');
         expect(calcDigit.calculate('0')).toEqual({
-            stage: 'OPERAND1',
             operand1: '480',
             operator: '',
             operand2: '',
-            displayValue: '480'
+            calculatedValue: '480'
         });
     });
 
@@ -105,11 +103,10 @@ describe('Calculator digit entry', () => {
         calcDigit.calculate('0');
         calcDigit.calculate('0');
         expect(calcDigit.calculate('0')).toEqual({
-            stage: 'OPERAND1',
             operand1: '0',
             operator: '',
             operand2: '',
-            displayValue: '0'
+            calculatedValue: '0'
         });
     });
 
@@ -120,11 +117,10 @@ describe('Calculator digit entry', () => {
         calcDigit.calculate('+');
         calcDigit.calculate('6');
         expect(calcDigit.calculate('0')).toEqual({
-            stage: 'OPERAND2',
             operand1: '48',
             operator: '+',
             operand2: '60',
-            displayValue: '60'
+            calculatedValue: '60'
         });
     });
 
@@ -135,11 +131,10 @@ describe('Calculator digit entry', () => {
         calcDigit.calculate('+');
         calcDigit.calculate('2');
         expect(calcDigit.calculate('9')).toEqual({
-            stage: 'OPERAND2',
             operand1: '74',
             operator: '+',
             operand2: '29',
-            displayValue: '29'
+            calculatedValue: '29'
         });
     });
 
@@ -150,11 +145,48 @@ describe('Calculator digit entry', () => {
         calcDigit.calculate('+');
         calcDigit.calculate('0');
         expect(calcDigit.calculate('0')).toEqual({
-            stage: 'OPERAND2',
             operand1: '74',
             operator: '+',
             operand2: '0',
-            displayValue: '0'
+            calculatedValue: '0'
         });
     });
+});
+
+describe('Calculator unary operator entry', () => {
+    test('Sign operator', () => {
+        let calcUnary = new Calculator();
+        calcUnary.calculate('1');
+        calcUnary.calculate('7');
+        expect(calcUnary.calculate('+/-')).toEqual({
+            operand1: '-17',
+            operator: '',
+            operand2: '',
+            calculatedValue: '-17'
+        });
+    });
+    test('Percent operator', () => {
+        let calcUnary = new Calculator();
+        calcUnary.calculate('4');
+        expect(calcUnary.calculate('%')).toEqual({
+            operand1: '0.04',
+            operator: '',
+            operand2: '',
+            calculatedValue: '0.04'
+        });
+    });
+    // test('Clear operator', () => {
+    //     let calcUnary = new Calculator();
+    //     calcUnary.calculate('4');
+    //     calcUnary.calculate('8');
+    //     calcUnary.calculate('6');
+    //     calcUnary.calculate('2');
+    //     calcUnary.calculate('9');
+    //     expect(calcUnary.calculate('A/C')).toEqual({
+    //         operand1: '0',
+    //         operator: '',
+    //         operand2: '',
+    //         calculatedValue: '0'
+    //     });
+    // });
 });

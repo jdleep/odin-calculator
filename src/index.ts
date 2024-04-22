@@ -7,11 +7,10 @@ interface UnaryOps {
 }
 
 type calcState = {
-    stage: 'OPERAND1' | 'OPERAND2';
     operand1: string;
     operator: string;
     operand2: string;
-    displayValue: string;
+    calculatedValue: string;
 }
 
 // class CalcMethods implements BinaryOps {
@@ -23,14 +22,11 @@ type calcState = {
 class Calculator {
 
     state: calcState = {
-        stage: 'OPERAND1',
-        operand1: '',
+        operand1: '0',
         operator: '',
         operand2: '',
-        displayValue: ''
+        calculatedValue: '0'
     }
-
-    digits = new Set(['1','2', '3', '4', '5', '6', '7', '8', '9', '0']) 
 
     binaryOps: BinaryOps = {
         '+': (a: number, b: number) => a + b,
@@ -61,28 +57,56 @@ class Calculator {
         }
     };
 
-    private enterDigit(digit: string, stage: string) {
+    private enterDigit(digit: string): void {
         let state = this.state;
-        let operand = state.operand1;
-        if (operand === '0' && digit === '0') {
-            return state;
+
+        //enter digit for operand1
+        const operand = !state.operator ? 'operand1' : 'operand2' as const;
+
+        // don't push 0s if already 0
+        if (state[operand] === '0') {
+            if (digit === '0') {
+                state.calculatedValue = state[operand];
+            } else {
+                // Clear default value of 0
+                state[operand] = digit;
+            }
+        } else {
+            state[operand] = state[operand] + digit;
+            state.calculatedValue = state[operand];
         }
-        operand = operand + digit;
-        state.displayValue = operand;
+    }
+
+    private enterUnaryOp(operator: string): void {
+        let state = this.state;
+        const operand = !state.operator ? 'operand1' : 'operand2' as const;
+
+        state[operand] = this.unaryOperate(+state[operand],operator)
+                             .toString();
+        state.calculatedValue = state[operand];
     }
 
     calculate(entry: string): calcState {
         let state = this.state;
-        if (state.stage === 'OPERAND1') {
+
+        // If there is an operator, the user is entering operand2
+
+        // User is entering operand1
+        if (!state.operator) {
             if (entry.match(/^[0-9]+$/) != null) {
-                this.enterDigit(entry, state.stage);
+                this.enterDigit(entry);
             } else {
-                state.operator = entry;
-                state.stage = 'OPERAND2';
+                if (this.unaryOps[entry]) {
+                    this.enterUnaryOp(entry);
+                }
+                if (this.binaryOps[entry]) {
+                    state.operator = entry;
+                }
             }
+        // User is entering operand2
         } else {
             if (entry.match(/^[0-9]+$/) != null) {
-                this.enterDigit(entry, state.stage);
+                this.enterDigit(entry);
             } 
         }
         return state;
