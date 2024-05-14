@@ -1,116 +1,66 @@
+import Big from 'big.js';
+import * as R from 'ramda';
+
+interface CalculatorState {
+    operands: Operands;
+    operator: string;
+    displayStr: string;
+};
+
+interface Operands {
+    storedOperand: Big;
+    currOperand: Big;
+};
+
+let calcState: CalculatorState = {
+    operands: {
+        storedOperand: Big('0'),
+        currOperand: Big('0')
+    },
+    operator: '',
+    displayStr: '0'
+};
+
+// Functions for entering digits
+const appendDigit = R.curry((digit: string, big: Big) => {
+    return Big(R.concat(big.toString(), digit));
+});
+
+const currOpLens = R.lensPath<CalculatorState>(['operands','currOperand']);
+
+const enterCalcDigit = R.curry((digit: string, calcState: CalculatorState) => 
+    R.over(currOpLens, appendDigit(digit), calcState));
+
+// Binary Operators
 interface BinaryOps {
-    [i: string]: (a: number, b: number) => number;
-}
+    [i: string]: (a: Big, b: Big) => Big;
+};
 
 interface UnaryOps {
-    [i: string]: (a: number) => number;
-}
+    [i: string]: (a: Big) => Big;
+};
 
-type calcState = {
-    operand1: string;
-    operator: string;
-    operand2: string;
-    calculatedValue: string;
-}
+const binaryOps: BinaryOps = {
+    '+': (a: Big, b: Big) => a.plus(b),
+    '-': (a: Big, b: Big) => a.minus(b),
+    '*': (a: Big, b: Big) => a.times(b),
+    '/': (a: Big, b: Big) => a.div(b)
+};
 
-// class CalcMethods implements BinaryOps {
-//     '+' = (a: number, b: number) => a + b;
-//     '-' = (a: number, b: number) => a - b;
-//     '*' = (a: number, b: number) => a * b;
-// }
+const unaryOps: UnaryOps = {
+    '+/-': (a: Big) => a.neg(),
+    '%': (a:Big) => a.div(100),
+    '=': (a:Big) => a
+};
 
-class Calculator {
 
-    state: calcState = {
-        operand1: '0',
-        operator: '',
-        operand2: '',
-        calculatedValue: '0'
-    }
 
-    binaryOps: BinaryOps = {
-        '+': (a: number, b: number) => a + b,
-        '-': (a: number, b: number) => a - b,
-        '*': (a: number, b: number) => a * b,
-        '/': (a: number, b: number) => a / b
-    };
+// Reset calculator
+const calcReset = (calc?: CalculatorState) => ({
+    storedOperand: Big('0'),
+    operator: '',
+    displayOperand: Big('0'),
+    displayStr: '0'
+});
 
-    unaryOps: UnaryOps = {
-        '+/-': (a: number) => a === 0 ? 0 : -a,
-        '%': (a:number) => a / 100,
-        '=': (a:number) => a
-    };
-
-    binaryOperate(a: number, b: string, c: number) {
-        if (this.binaryOps[b]) {
-            return this.binaryOps[b](a, c);
-        } else {
-            throw new Error("Operator not found in calculator");
-        }
-    };
-
-    unaryOperate(a: number, b: string) {
-        if (this.unaryOps[b]) {
-            return this.unaryOps[b](a);
-        } else {
-            throw new Error("Operator not found in calculator");
-        }
-    };
-
-    private enterDigit(digit: string): void {
-        let state = this.state;
-
-        //enter digit for operand1
-        const operand = !state.operator ? 'operand1' : 'operand2' as const;
-
-        // don't push 0s if already 0
-        if (state[operand] === '0') {
-            if (digit === '0') {
-                state.calculatedValue = state[operand];
-            } else {
-                // Clear default value of 0
-                state[operand] = digit;
-            }
-        } else {
-            state[operand] = state[operand] + digit;
-            state.calculatedValue = state[operand];
-        }
-    }
-
-    private enterUnaryOp(operator: string): void {
-        let state = this.state;
-        const operand = !state.operator ? 'operand1' : 'operand2' as const;
-
-        state[operand] = this.unaryOperate(+state[operand],operator)
-                             .toString();
-        state.calculatedValue = state[operand];
-    }
-
-    calculate(entry: string): calcState {
-        let state = this.state;
-
-        // If there is an operator, the user is entering operand2
-
-        // User is entering operand1
-        if (!state.operator) {
-            if (entry.match(/^[0-9]+$/) != null) {
-                this.enterDigit(entry);
-            } else {
-                if (this.unaryOps[entry]) {
-                    this.enterUnaryOp(entry);
-                }
-                if (this.binaryOps[entry]) {
-                    state.operator = entry;
-                }
-            }
-        // User is entering operand2
-        } else {
-            if (entry.match(/^[0-9]+$/) != null) {
-                this.enterDigit(entry);
-            } 
-        }
-        return state;
-    }
-}
-
-export { Calculator }
+export {appendDigit, enterCalcDigit, binaryOps, unaryOps}
