@@ -26,31 +26,65 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.enterCalcDigit = exports.appendDigit = void 0;
+exports.applyBinFun = exports.enterUnaryOp = exports.unaryOps = exports.binaryOps = exports.enterCalcDigit = exports.appendDigit = exports.initState = void 0;
 const big_js_1 = __importDefault(require("big.js"));
 const R = __importStar(require("ramda"));
 ;
-let calcState = {
-    operators: {
+;
+// Initialize calc state
+const initState = (calc) => ({
+    operands: {
         storedOperand: (0, big_js_1.default)('0'),
         currOperand: (0, big_js_1.default)('0')
     },
     operator: '',
-    displayStr: '0'
-};
+    displayStr: '0',
+    postCalc: false
+});
+exports.initState = initState;
+let calcState = initState();
+const currOpLens = R.lensPath(['operands', 'currOperand']);
+const storedOpLens = R.lensPath(['operands', 'storedOperand']);
+const postCalcLens = R.lensPath(['postCalc']);
+const opLens = R.lensPath(['operator']);
+const dispLens = R.lensPath(['displayStr']);
 // Functions for entering digits
 const appendDigit = R.curry((digit, big) => {
     return (0, big_js_1.default)(R.concat(big.toString(), digit));
 });
 exports.appendDigit = appendDigit;
-const currOpLens = R.lensPath(['operators', 'currOperand']);
-const enterCalcDigit = R.curry((digit, calcState) => R.over(currOpLens, appendDigit(digit), calcState));
-exports.enterCalcDigit = enterCalcDigit;
-// Reset calculator
-const calcReset = () => ({
-    storedOperand: (0, big_js_1.default)('0'),
-    operator: '',
-    displayOperand: (0, big_js_1.default)('0'),
-    displayStr: '0'
+const postCalcReset = R.ifElse(R.whereEq({ postCalc: true }), R.pipe(R.set(postCalcLens, false), R.set(currOpLens, (0, big_js_1.default)('0'))), R.identity);
+const enterCalcDigit = R.curry((digit, calcState) => {
+    return R.pipe(postCalcReset, R.over(currOpLens, appendDigit(digit)))(calcState);
 });
+exports.enterCalcDigit = enterCalcDigit;
+;
+const binaryOps = {
+    '+': R.curry((a, b) => a.plus(b)),
+    '-': R.curry((a, b) => a.minus(b)),
+    '*': R.curry((a, b) => a.times(b)),
+    '/': R.curry((a, b) => a.div(b))
+};
+exports.binaryOps = binaryOps;
+const calculate = (calcState) => {
+    R.view(opLens, calcState) in binaryOps
+        ? applyBinFun(binaryOps[R.view(opLens, calcState)], calcState)
+        : calcState;
+};
+const applyBinFun = (fun, calcState) => {
+    return R.set(currOpLens, fun(R.view(storedOpLens, calcState), R.view(currOpLens, calcState)), calcState);
+};
+exports.applyBinFun = applyBinFun;
+;
+const unaryOps = {
+    '+/-': (a) => a.neg(),
+    '%': (a) => a.div(100),
+};
+exports.unaryOps = unaryOps;
+const enterUnaryOp = R.curry((op, calcState) => {
+    return op in unaryOps
+        ? R.set(currOpLens, unaryOps[op](R.view(currOpLens, calcState)), calcState)
+        : calcState;
+});
+exports.enterUnaryOp = enterUnaryOp;
 //# sourceMappingURL=index.js.map

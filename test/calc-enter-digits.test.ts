@@ -17,7 +17,7 @@ describe('Digit Functions', () => {
         let resultState = R.clone(initialState)
         resultState.operands.currOperand = Big('11345');
         
-        expect(calc.enterCalcDigit('5', initialState)).toEqual(resultState);
+        expect(calc.enterDigit('5', initialState)).toEqual(resultState);
     });
     test('Enter digit while already 0', () => {
         let initialState = calc.initState();
@@ -27,18 +27,18 @@ describe('Digit Functions', () => {
         let resultState = R.clone(initialState)
         resultState.operands.currOperand = Big('0');
         
-        expect(calc.enterCalcDigit('0', initialState)).toEqual(resultState);        
+        expect(calc.enterDigit('0', initialState)).toEqual(resultState);        
     });
     test('Post-calc reset', () => {
         let initialState = calc.initState();
         initialState.operands.currOperand = Big('5236');
-        initialState.postCalc = true;
+        initialState.isPostCalc = true;
 
         
         let resultState = R.clone(initialState)
         resultState.operands.currOperand = Big('4');
-        resultState.postCalc = false;
+        resultState.isPostCalc = false;
         
-        expect(calc.enterCalcDigit('4', initialState)).toEqual(resultState);        
+        expect(calc.enterDigit('4', initialState)).toEqual(resultState);        
     });
 });
