@@ -1,6 +1,8 @@
 import Big from 'big.js';
 import * as R from 'ramda';
+import * as RE from 'remeda';
 
+// State
 interface CalcState {
     operands: Operands;
     operator: string;
@@ -13,7 +15,6 @@ interface Operands {
     currOperand: Big;
 };
 
-// Initialize calc state
 const initState = (calc?: CalcState): CalcState => ({
     operands: {
         storedOperand: Big('0'),
@@ -26,6 +27,9 @@ const initState = (calc?: CalcState): CalcState => ({
 
 let globalState: CalcState = initState();
 
+const updateState = (globalState: CalcState, calcState: CalcState) => 
+    Object.assign(globalState, calcState);
+
 const currOpLens = R.lensPath<CalcState, Big>(['operands','currOperand']);
 const storedOpLens = R.lensPath<CalcState, Big>(['operands','storedOperand']);
 const isPostCalcLens = R.lensPath<CalcState, boolean>(['isPostCalc']);
@@ -33,7 +37,7 @@ const opLens = R.lensPath<CalcState, string>(['operator']);
 const dispLens = R.lensPath<CalcState, string>(['displayStr']);
 
 
-// Functions for entering digits
+// Digits
 const appendDigit = R.curry((digit: string, big: Big) => {
     return Big(R.concat(big.toString(), digit));
 });
@@ -82,8 +86,9 @@ const copyToStoredOp = (calcState: CalcState) => {
 
 const calculate = (calcState: CalcState) => {
     return R.view(opLens, calcState) in binaryOps 
-    // Couldn't get type to work, so manually set to "any"
-    ? R.pipe<any, CalcState, CalcState, CalcState>(
+    // Ramda pipe wasn't working with typescript so
+    // went with Remeda
+    ? RE.piped(
         R.set(isPostCalcLens, true),
         applyBinFun(binaryOps[R.view(opLens, calcState)]),
         copyToStoredOp
@@ -91,12 +96,12 @@ const calculate = (calcState: CalcState) => {
     : calcState
 }
 
-const enterBinOp = (binOp: string, calcState: CalcState) => {
+const enterBinOp = R.curry((binOp: string, calcState: CalcState) => {
     return R.pipe(
         calculate,
         R.set(opLens, binOp)
     )(calcState);
-};
+});
 
 // Unary Operators
 interface UnaryOps {
@@ -133,29 +138,54 @@ const updDispStr = (calcState: CalcState) =>
 
 // Todo: Look into using Cond instead of switch
 const getEnterFun = (str: string) => {
-    let fun: ((str: string, calcState: CalcState) => CalcState);
+    let fun: ((calcState: CalcState) => CalcState);
     switch (true) {
         case str in binaryOps:
-            fun = enterBinOp;
+            fun = enterBinOp(str);
             break;
         case str in unaryOps:
-            fun = enterUnaryOp;
+            fun = enterUnaryOp(str);
             break;
-        case /^d$/.test(str):
-            fun = enterDigit;
+        case /^\d$/.test(str):
+            fun = enterDigit(str);
             break;
         case str === '=':
-            fun = enterEquals;
+            fun = enterEquals(str);
             break;
         case str === 'A/C':
-            fun = enterClear;
+            fun = enterClear(str);
+            break;
         default:
             // Just return identity function if input string
-            // is not digit, operator, equals, or
-            // clear
-            fun = (str , calcState) => calcState;
+            // is not digit, operator, equals, or clear
+            fun = (calcState) => calcState;
     };
     return fun;
 }
 
-export {initState, appendDigit, enterDigit, binaryOps, unaryOps, enterUnaryOp, applyBinFun, calculate, enterBinOp, updDispStr, getEnterFun, enterEquals, enterClear}
+const updateUiCalcVal = R.curry((el: Element, calcState: CalcState) => {
+    
+    let calculatedValue = el.querySelector('.calculated-value') as HTMLElement;
+        calculatedValue.innerText = R.view(dispLens, calcState);
+
+    return calcState;
+});
+
+// let el = document.querySelector('.calculator');
+
+// if(el && el instanceof HTMLElement) {
+//     el.addEventListener('click', (e) => {
+//         if(e.target 
+//             && e.target instanceof HTMLElement 
+//             && e.target.tagName === 'BUTTON')
+//         R.pipe(
+//             getEnterFun(e.target.innerText),
+//             updDispStr,
+//             updateUiCalcVal(el),
+//         )(globalState);
+//     });
+// };
+
+console.log('test');
+
+export {initState, appendDigit, enterDigit, binaryOps, unaryOps, enterUnaryOp, applyBinFun, calculate, enterBinOp, updDispStr, getEnterFun, enterEquals, enterClear, updateState}

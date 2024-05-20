@@ -15,5 +15,17 @@ describe('UI Methods', () => {
     });
     test('getEnterFun - binary operator', () => {
         expect(calc.getEnterFun('+')).toEqual(calc.enterBinOp);
-    })
+    });
+    test('getEnterFun - unary operator', () => {
+        expect(calc.getEnterFun('%')).toEqual(calc.enterUnaryOp);
+    });
+    test('getEnterFun - digit', () => {
+        expect(calc.getEnterFun('3')).toEqual(calc.enterDigit);
+    });
+    test('getEnterFun - equals', () => {
+        expect(calc.getEnterFun('=')).toEqual(calc.enterEquals);
+    });
+    test('getEnterFun - clear', () => {
+        expect(calc.getEnterFun('A/C')).toEqual(calc.enterClear);
+    });
 });

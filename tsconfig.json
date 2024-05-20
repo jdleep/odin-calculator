@@ -5,7 +5,7 @@
   "_version": "20.11.1",
 
   "compilerOptions": {
-    "lib": ["es2023"],
+    "lib": ["es2023", "DOM"],
     "module": "node16",
     "target": "es2022",
     "sourceMap": true,    

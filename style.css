@@ -36,7 +36,8 @@ Div > button {
     background-color: lightgreen;
 }
 
-.operator {
+.operator,
+.equals {
     background-color: lightcoral;
 }
 
