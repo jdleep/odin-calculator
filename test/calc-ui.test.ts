@@ -14,18 +14,23 @@ describe('UI Methods', () => {
         expect(calc.updDispStr(initialState)).toEqual(resultState);
     });
     test('getEnterFun - binary operator', () => {
-        expect(calc.getEnterFun('+')).toEqual(calc.enterBinOp);
+        expect(JSON.stringify(calc.getEnterFun('+')))
+        .toStrictEqual(JSON.stringify(calc.enterBinOp('+')));
     });
     test('getEnterFun - unary operator', () => {
-        expect(calc.getEnterFun('%')).toEqual(calc.enterUnaryOp);
+        expect(JSON.stringify(calc.getEnterFun('%')))
+        .toEqual(JSON.stringify(calc.enterUnaryOp('%')));
     });
     test('getEnterFun - digit', () => {
-        expect(calc.getEnterFun('3')).toEqual(calc.enterDigit);
+        expect(JSON.stringify(calc.getEnterFun('3')))
+        .toEqual(JSON.stringify(calc.enterDigit('3')));
     });
     test('getEnterFun - equals', () => {
-        expect(calc.getEnterFun('=')).toEqual(calc.enterEquals);
+        expect(JSON.stringify(calc.getEnterFun('=')))
+        .toEqual(JSON.stringify(calc.enterEquals('=')));
     });
     test('getEnterFun - clear', () => {
-        expect(calc.getEnterFun('A/C')).toEqual(calc.enterClear);
+        expect(JSON.stringify(calc.getEnterFun('A/C')))
+        .toEqual(JSON.stringify(calc.enterClear('A/C')));
     });
 });

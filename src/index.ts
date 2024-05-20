@@ -135,33 +135,15 @@ const enterEquals = R.curry(
 const updDispStr = (calcState: CalcState) => 
     R.set(dispLens, R.view(currOpLens, calcState).toString(), calcState);
 
+const getEnterFun = (str: string) => R.cond([
+    [R.flip(R.has)(binaryOps), enterBinOp],
+    [R.flip(R.has)(unaryOps), enterUnaryOp],
+    [R.curry(/^\d$/.test), enterDigit],
+    [R.equals('='), enterEquals],
+    [R.equals('A/C'), enterClear],
+    [R.T, R.always((calcState: CalcState): CalcState => calcState)]
+]);
 
-// Todo: Look into using Cond instead of switch
-const getEnterFun = (str: string) => {
-    let fun: ((calcState: CalcState) => CalcState);
-    switch (true) {
-        case str in binaryOps:
-            fun = enterBinOp(str);
-            break;
-        case str in unaryOps:
-            fun = enterUnaryOp(str);
-            break;
-        case /^\d$/.test(str):
-            fun = enterDigit(str);
-            break;
-        case str === '=':
-            fun = enterEquals(str);
-            break;
-        case str === 'A/C':
-            fun = enterClear(str);
-            break;
-        default:
-            // Just return identity function if input string
-            // is not digit, operator, equals, or clear
-            fun = (calcState) => calcState;
-    };
-    return fun;
-}
 
 const updateUiCalcVal = R.curry((el: Element, calcState: CalcState) => {
     
