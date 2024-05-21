@@ -1,4 +1,4 @@
-import * as calc from '../src/index'
+import * as calc from '../src/app'
 import Big from 'big.js';
 import { describe, test, expect } from "@jest/globals"
 import * as R from 'ramda';
