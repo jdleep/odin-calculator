@@ -39,8 +39,8 @@ describe('Binary Operands', () => {
         initialState.operands.currOperand = Big('342');
 
         let resultState = R.clone(initialState);
+        resultState.operands.storedOperand = Big('23');
         resultState.operands.currOperand = Big('365');
-        resultState.operands.storedOperand = Big('365');
         resultState.isPostCalc = true;
 
         expect(calc.calculate(initialState)).toEqual(resultState);
@@ -60,4 +60,19 @@ describe('enterBinOp: +', () => {
     resultState.isPostCalc = true;
 
     expect(calc.enterBinOp('-', initialState)).toEqual(resultState);
+});
+
+describe('enterEquals', () => {
+    let initialState = calc.initState();
+    initialState.operands.storedOperand = Big('253');
+    initialState.operator = '+';
+    initialState.operands.currOperand = Big('67');
+
+    let resultState = R.clone(initialState);
+    resultState.operands.currOperand = Big('320');
+    resultState.operator = '';
+    resultState.operands.storedOperand = Big('320');
+    resultState.isPostCalc = true;
+
+    expect(calc.enterEquals('=', initialState)).toEqual(resultState);
 });
