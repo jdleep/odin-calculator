@@ -6,39 +6,39 @@ import * as R from 'ramda';
 //todo test overflows
 describe('Digit Functions', () => {
     test('Append string digit to Big', () => {
-        let big = Big('1234');
-        expect(calc.appendDigit('5', big)).toEqual(Big('12345'));
+        expect(calc.appendDigit('5')(1234)).toEqual(12345);
     });
     test('Enter digit', () => {
         let initialState = calc.initState();
-        initialState.operands.currOperand = Big('1134');
+        initialState.operands.currOperand = 1134;
 
         
         let resultState = R.clone(initialState)
-        resultState.operands.currOperand = Big('11345');
+        resultState.operands.currOperand = 11345;
         
-        expect(calc.enterDigit('5', initialState)).toEqual(resultState);
+        expect(calc.enterDigit('5')(initialState)).toEqual(resultState);
     });
     test('Enter digit while already 0', () => {
         let initialState = calc.initState();
-        initialState.operands.currOperand = Big('0');
+        initialState.operands.currOperand = 0;
 
         
         let resultState = R.clone(initialState)
-        resultState.operands.currOperand = Big('0');
+        resultState.operands.currOperand = 0;
         
-        expect(calc.enterDigit('0', initialState)).toEqual(resultState);        
+        expect(calc.enterDigit('0')(initialState)).toEqual(resultState);        
     });
+    
     test('Post-calc reset', () => {
         let initialState = calc.initState();
-        initialState.operands.currOperand = Big('5236');
+        initialState.operands.currOperand = 5236;
         initialState.isPostCalc = true;
 
         
         let resultState = R.clone(initialState)
-        resultState.operands.currOperand = Big('4');
+        resultState.operands.currOperand = 4;
         resultState.isPostCalc = false;
         
-        expect(calc.enterDigit('4', initialState)).toEqual(resultState);        
+        expect(calc.enterDigit('4')(initialState)).toEqual(resultState);        
     });
 });

@@ -7,72 +7,88 @@ import * as R from 'ramda';
 describe('binaryOps', () => {
     test('Binary Op: +', () => {
         expect(
-            calc.binaryOps['+'](Big('3245'), Big('4250'))
+            calc.binaryOps['+'](3245, 4250)
         )
-        .toEqual(Big('7495'));
+        .toEqual(7495);
     });
     test('Binary Op: -', () => {
         expect(
-            calc.binaryOps['-'](Big('526'), Big('610524'))
+            calc.binaryOps['-'](526, 610524)
         )
-        .toEqual(Big('-609998'));
+        .toEqual(-609998);
     });
     test('Binary Op: *', () => {
         expect(
-            calc.binaryOps['*'](Big('435'), Big('6214'))
+            calc.binaryOps['*'](435, 6214)
         )
-        .toEqual(Big('2703090'));
+        .toEqual(2703090);
     });
     test('Binary Op: /', () => {
         expect(
-            calc.binaryOps['/'](Big('12'), Big('0.5'))
+            calc.binaryOps['/'](12, 0.5)
         )
-        .toEqual(Big('24'));
+        .toEqual(24);
     });
 });
 
 describe('Binary Operands', () => {
     test('Calculate: +', () => {
         let initialState = calc.initState();
-        initialState.operands.storedOperand = Big('23');
+        initialState.operands.storedOperand = 23;
         initialState.operator = '+';
-        initialState.operands.currOperand = Big('342');
+        initialState.operands.currOperand = 342;
 
         let resultState = R.clone(initialState);
-        resultState.operands.storedOperand = Big('23');
-        resultState.operands.currOperand = Big('365');
+        resultState.operands.storedOperand = 23;
+        resultState.operands.currOperand = 365;
         resultState.isPostCalc = true;
 
         expect(calc.calculate(initialState)).toEqual(resultState);
     });
+    test('enterBinOp: +', () => {
+        let initialState = calc.initState();
+        initialState.operands.storedOperand = 52;
+        initialState.operator = '+';
+        initialState.operands.currOperand = 3432;
+    
+        let resultState = R.clone(initialState);
+        resultState.operands.currOperand = 3484;
+        resultState.operator = '-';
+        resultState.operands.storedOperand = 3484;
+        resultState.isPostCalc = true;
+    
+        expect(calc.enterBinOp('-')(initialState)).toEqual(resultState);
+    });
+    test('Divide by zero', () => {
+        let initialState = calc.initState();
+        initialState.operands.storedOperand = -521;
+        initialState.operator = '/';
+        initialState.operands.currOperand = 0;
+    
+        let resultState = R.clone(initialState);
+        resultState.operands.currOperand = Infinity;
+        resultState.operator = '';
+        resultState.operands.storedOperand = Infinity;
+        resultState.isPostCalc = true;
+    
+        expect(calc.enterEquals('=')(initialState)).toEqual(resultState);
+    });
 });
 
-describe('enterBinOp: +', () => {
-    let initialState = calc.initState();
-    initialState.operands.storedOperand = Big('52');
-    initialState.operator = '+';
-    initialState.operands.currOperand = Big('3432');
-
-    let resultState = R.clone(initialState);
-    resultState.operands.currOperand = Big('3484');
-    resultState.operator = '-';
-    resultState.operands.storedOperand = Big('3484');
-    resultState.isPostCalc = true;
-
-    expect(calc.enterBinOp('-', initialState)).toEqual(resultState);
-});
 
 describe('enterEquals', () => {
-    let initialState = calc.initState();
-    initialState.operands.storedOperand = Big('253');
-    initialState.operator = '+';
-    initialState.operands.currOperand = Big('67');
-
-    let resultState = R.clone(initialState);
-    resultState.operands.currOperand = Big('320');
-    resultState.operator = '';
-    resultState.operands.storedOperand = Big('320');
-    resultState.isPostCalc = true;
-
-    expect(calc.enterEquals('=', initialState)).toEqual(resultState);
+    test('enterEquals: +', () => {
+        let initialState = calc.initState();
+        initialState.operands.storedOperand = 253;
+        initialState.operator = '+';
+        initialState.operands.currOperand = 67;
+    
+        let resultState = R.clone(initialState);
+        resultState.operands.currOperand = 320;
+        resultState.operator = '';
+        resultState.operands.storedOperand = 320;
+        resultState.isPostCalc = true;
+    
+        expect(calc.enterEquals('=')(initialState)).toEqual(resultState);
+    });
 });

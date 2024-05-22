@@ -11,14 +11,14 @@ interface CalcState {
 };
 
 interface Operands {
-    storedOperand: Big;
-    currOperand: Big;
+    storedOperand: number;
+    currOperand: number;
 };
 
 const initState = (calc?: CalcState): CalcState => ({
     operands: {
-        storedOperand: Big('0'),
-        currOperand: Big('0')
+        storedOperand: 0,
+        currOperand: 0
     },
     operator: '',
     displayStr: '0',
@@ -27,54 +27,56 @@ const initState = (calc?: CalcState): CalcState => ({
 
 let globalState: CalcState = initState();
 
-const updateState = R.curry((globalState: CalcState, calcState: CalcState): CalcState => {
+const updateState = (globalState: CalcState) => 
+    (calcState: CalcState): CalcState => {
     Object.assign(globalState, calcState);
     return globalState;
-});
+};
 
 
-const currOpLens = R.lensPath<CalcState, Big>(['operands','currOperand']);
-const storedOpLens = R.lensPath<CalcState, Big>(['operands','storedOperand']);
+const currOpLens = R.lensPath<CalcState, number>(['operands','currOperand']);
+const storedOpLens = 
+    R.lensPath<CalcState, number>(['operands','storedOperand']);
 const isPostCalcLens = R.lensPath<CalcState, boolean>(['isPostCalc']);
 const opLens = R.lensPath<CalcState, string>(['operator']);
 const dispLens = R.lensPath<CalcState, string>(['displayStr']);
 
 
 // Digits
-const appendDigit = R.curry((digit: string, big: Big) => {
-    return Big(R.concat(big.toString(), digit));
-});
+const appendDigit = (digit: string) => (num: number) => {
+    return Number(R.concat(num.toString(), digit));
+};
 
 
 const isPostCalcReset = R.ifElse(
     R.whereEq({isPostCalc: true}),
     R.pipe(
         R.set(isPostCalcLens, false),
-        R.set(currOpLens, Big('0'))
+        R.set(currOpLens, 0)
     ),
     R.identity
 );
 
-const enterDigit = R.curry((digit: string, calcState: CalcState) => {
+const enterDigit = (digit: string) => (calcState: CalcState) => {
     return R.pipe(
         isPostCalcReset,
         R.over(currOpLens, appendDigit(digit))
     )(calcState)
-});
+};
 
 // Binary Operators
 interface BinaryOps {
-    [i: string]: (a: Big, b: Big) => Big;
+    [i: string]: (a: number, b: number) => number;
 };
 
 const binaryOps: BinaryOps = {
-    '+': R.curry((a: Big, b: Big) => a.plus(b)),
-    '-': R.curry((a: Big, b: Big) => a.minus(b)),
-    '*': R.curry((a: Big, b: Big) => a.times(b)),
-    '/': R.curry((a: Big, b: Big) => a.div(b))
+    '+': (a: number, b: number) => a + b,
+    '-': (a: number, b: number) => a - b,
+    '*': (a: number, b: number) => a * b,
+    '/': (a: number, b: number) => b === 0 ? Infinity : a / b
 };
 
-const applyBinFun = (fun: (a: Big, b: Big) => Big) => 
+const applyBinFun = (fun: (a: number, b: number) => number) => 
     (calcState: CalcState): CalcState  => {
     return R.set(
         currOpLens,
@@ -98,46 +100,48 @@ const calculate = (calcState: CalcState) => {
     : calcState;
 }
 
-const enterBinOp = R.curry((binOp: string, calcState: CalcState) => {
+const enterBinOp = (binOp: string) => (calcState: CalcState) => {
     return R.pipe(
         calculate,
         R.set(opLens, binOp),
         copyToStoredOp,
         R.set(isPostCalcLens, true)
     )(calcState);
-});
+};
 
 // Unary Operators
 interface UnaryOps {
-    [i: string]: (a: Big) => Big;
+    [i: string]: (a: number) => number;
 };
 
 const unaryOps: UnaryOps = {
-    '+/-': (a: Big) => a.neg(),
-    '%': (a:Big) => a.div(100),
+    '+/-': (a: number) => -a,
+    '%': (a: number) => a / 100,
 };
 
-const enterUnaryOp = R.curry((op: string, calcState: CalcState) => {
+const enterUnaryOp = (op: string) => (calcState: CalcState) => {
     return op in unaryOps 
     ? R.set(currOpLens,        
         unaryOps[op](R.view(currOpLens, calcState)),
         calcState
     )
     : calcState
-});
+};
 
 // Misc
-const enterClear = R.curry(
-    (clear: string, calcState: CalcState) => initState()
-);
+const enterClear = (clear: string) => (calcState: CalcState) => initState();
 
-const enterEquals = R.curry(
-    (eq: string, calcState: CalcState) => R.pipe(
+const enterEquals = (eq: string) => (calcState: CalcState) => 
+    R.pipe(
         calculate,
         R.set(opLens, ''),
         copyToStoredOp
-    )(calcState)
-);
+    )(calcState);
+
+const enterDecimal = (decimal: string) => 
+    R.pipe(
+        R.over(currOpLens, appendDigit(decimal))
+    );
 
 // UI
 const updDispStr = (calcState: CalcState) => 
