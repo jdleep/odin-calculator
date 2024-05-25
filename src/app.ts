@@ -35,7 +35,6 @@ const dispValLens = R.lensPath<CalcState, string>(['displayValue']);
 const storeValLens = R.lensPath<CalcState, string>(['storedValue']);
 const isPostCalcLens = R.lensPath<CalcState, boolean>(['isPostCalc']);
 const opLens = R.lensPath<CalcState, string>(['operator']);
-const dispLens = R.lensPath<CalcState, string>(['displayStr']);
 
 
 // Digits
@@ -160,7 +159,7 @@ const updateUiCalcVal = (el: Element) => (calcState: CalcState) => {
 
     let calculatedValue = el.querySelector('.calculated-value') as HTMLElement;
     if (calculatedValue) {
-        calculatedValue.innerText = R.view(dispLens, calcState);
+        calculatedValue.innerText = R.view(dispValLens, calcState);
     }
     return calcState;
 };
