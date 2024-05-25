@@ -8,7 +8,6 @@ interface CalcState {
     operator: string;
     displayValue: string;
     isPostCalc: boolean;
-    hasDecimal: boolean;
 };
 
 // interface Operands {
@@ -20,8 +19,7 @@ const initState = (calc?: CalcState): CalcState => ({
     storedValue: '0',
     operator: '',
     displayValue: '0',
-    isPostCalc: false,
-    hasDecimal: false
+    isPostCalc: false
 });
 
 let globalState: CalcState = initState();
@@ -38,7 +36,6 @@ const storeValLens = R.lensPath<CalcState, string>(['storedValue']);
 const isPostCalcLens = R.lensPath<CalcState, boolean>(['isPostCalc']);
 const opLens = R.lensPath<CalcState, string>(['operator']);
 const dispLens = R.lensPath<CalcState, string>(['displayStr']);
-const hasDecLens = R.lensPath<CalcState, boolean>(['hasDecimal']);
 
 
 // Digits
@@ -146,17 +143,8 @@ const hasDecBuffer = (calcState: CalcState) =>
 
 const enterDecimal = (decimal: string) => (calcState: CalcState) => {
     return /\./.test(R.view(dispValLens, calcState)) 
-    ? R.set(hasDecLens, false, calcState)
-    : calcState;
-};
-
-const getDecBuffer = (calcState: CalcState) => R.view(decBufferLens, calcState);
-
-const resetDecBuffer = (calcState: CalcState) => {
-    return !Number.isInteger(R.view(currOpLens, calcState))
-    || R.view(isPostCalcLens, calcState)
-    ? R.set(decBufferLens, '', calcState)
-    : calcState 
+    ? calcState
+    : enterChar('.')(calcState);
 };
 
 // UI

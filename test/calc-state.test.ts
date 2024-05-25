@@ -9,8 +9,7 @@ describe('State functions', () => {
             storedValue: '0',
             displayValue: '0',
             operator: '',
-            isPostCalc: false,
-            hasDecimal: false
+            isPostCalc: false
         };
         expect(calc.initState()).toEqual(resultState);
     });
