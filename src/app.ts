@@ -8,6 +8,7 @@ interface CalcState {
     operator: string;
     displayStr: string;
     isPostCalc: boolean;
+    decimalBuffer: string;
 };
 
 interface Operands {
@@ -22,7 +23,8 @@ const initState = (calc?: CalcState): CalcState => ({
     },
     operator: '',
     displayStr: '0',
-    isPostCalc: false
+    isPostCalc: false,
+    decimalBuffer: ''
 });
 
 let globalState: CalcState = initState();
@@ -40,6 +42,7 @@ const storedOpLens =
 const isPostCalcLens = R.lensPath<CalcState, boolean>(['isPostCalc']);
 const opLens = R.lensPath<CalcState, string>(['operator']);
 const dispLens = R.lensPath<CalcState, string>(['displayStr']);
+const decBufferLens = R.lensPath<CalcState, string>(['decimalBuffer']);
 
 
 // Digits
@@ -47,8 +50,7 @@ const appendDigit = (digit: string) => (num: number) => {
     return Number(R.concat(num.toString(), digit));
 };
 
-
-const isPostCalcReset = R.ifElse(
+const postCalcReset = R.ifElse(
     R.whereEq({isPostCalc: true}),
     R.pipe(
         R.set(isPostCalcLens, false),
@@ -59,8 +61,8 @@ const isPostCalcReset = R.ifElse(
 
 const enterDigit = (digit: string) => (calcState: CalcState) => {
     return R.pipe(
-        isPostCalcReset,
-        R.over(currOpLens, appendDigit(digit))
+        postCalcReset,
+        R.over(currOpLens, appendDigit(getDecBuffer(calcState) + digit))
     )(calcState)
 };
 
@@ -73,7 +75,7 @@ const binaryOps: BinaryOps = {
     '+': (a: number, b: number) => a + b,
     '-': (a: number, b: number) => a - b,
     '*': (a: number, b: number) => a * b,
-    '/': (a: number, b: number) => b === 0 ? Infinity : a / b
+    '/': (a: number, b: number) => a / b
 };
 
 const applyBinFun = (fun: (a: number, b: number) => number) => 
@@ -128,9 +130,10 @@ const enterUnaryOp = (op: string) => (calcState: CalcState) => {
     : calcState
 };
 
-// Misc
+// Clear
 const enterClear = (clear: string) => (calcState: CalcState) => initState();
 
+// Equals
 const enterEquals = (eq: string) => (calcState: CalcState) => 
     R.pipe(
         calculate,
@@ -138,14 +141,31 @@ const enterEquals = (eq: string) => (calcState: CalcState) =>
         copyToStoredOp
     )(calcState);
 
-const enterDecimal = (decimal: string) => 
-    R.pipe(
-        R.over(currOpLens, appendDigit(decimal))
-    );
+// Decimal
+const hasDecBuffer = (calcState: CalcState) => 
+    !!R.view(decBufferLens, calcState);
+
+const enterDecimal = (decimal: string) => (calcState: CalcState) => {
+    return Number.isInteger(R.view(currOpLens, calcState)) 
+    ? R.set(decBufferLens, '.', calcState)
+    : calcState;
+};
+
+const getDecBuffer = (calcState: CalcState) => R.view(decBufferLens, calcState);
+
+const resetDecBuffer = (calcState: CalcState) => {
+    return !Number.isInteger(R.view(currOpLens, calcState))
+    || R.view(isPostCalcLens, calcState)
+    ? R.set(decBufferLens, '', calcState)
+    : calcState 
+};
 
 // UI
 const updDispStr = (calcState: CalcState) => 
-    R.set(dispLens, R.view(currOpLens, calcState).toString(), calcState);
+        R.set(dispLens,
+            R.view(currOpLens, calcState).toString() + getDecBuffer(calcState),
+            calcState);
+
 
 const getEnterFun: ((str: string) => ((c: CalcState) => CalcState)) = R.cond([
     [R.flip(R.has)(binaryOps), enterBinOp],
@@ -153,9 +173,9 @@ const getEnterFun: ((str: string) => ((c: CalcState) => CalcState)) = R.cond([
     [(str: string) => /^\d$/.test(str), enterDigit],
     [R.equals('='), enterEquals],
     [R.equals('A/C'), enterClear],
+    [R.equals('.'), enterDecimal],
     [R.T, R.always((calcState: CalcState): CalcState => calcState)]
 ]);
-
 
 const updateUiCalcVal = (el: Element) => (calcState: CalcState) => {
 
@@ -167,4 +187,4 @@ const updateUiCalcVal = (el: Element) => (calcState: CalcState) => {
 };
 
 
-export {CalcState, initState, appendDigit, enterDigit, binaryOps, unaryOps, enterUnaryOp, applyBinFun, calculate, enterBinOp, updDispStr, getEnterFun, enterEquals, enterClear, updateState, updateUiCalcVal, globalState}
+export {CalcState, initState, appendDigit, enterDigit, binaryOps, unaryOps, enterUnaryOp, applyBinFun, calculate, enterBinOp, updDispStr, getEnterFun, enterEquals, enterClear, updateState, updateUiCalcVal, enterDecimal, getDecBuffer, hasDecBuffer, resetDecBuffer, globalState}

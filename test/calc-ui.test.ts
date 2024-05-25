@@ -1,5 +1,4 @@
 import * as calc from '../src/app';
-import Big from 'big.js';
 import { describe, test, expect } from "@jest/globals"
 import * as R from 'ramda';
 
@@ -10,6 +9,16 @@ describe('UI Methods', () => {
 
         let resultState = R.clone(initialState);
         resultState.displayStr = '3425';
+
+        expect(calc.updDispStr(initialState)).toEqual(resultState);
+    });
+    test('updDispStr with decimal buffer', () => {
+        let initialState = calc.initState();
+        initialState.operands.currOperand = 3425;
+        initialState.decimalBuffer = '.';
+
+        let resultState = R.clone(initialState);
+        resultState.displayStr = '3425.';
 
         expect(calc.updDispStr(initialState)).toEqual(resultState);
     });

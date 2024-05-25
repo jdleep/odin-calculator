@@ -1,5 +1,4 @@
 import * as calc from '../src/app'
-import Big from 'big.js';
 import { describe, test, expect } from "@jest/globals"
 import * as R from 'ramda';
 
@@ -13,7 +12,8 @@ describe('State functions', () => {
             },
             operator: '',
             displayStr: '0',
-            isPostCalc: false
+            isPostCalc: false,
+            decimalBuffer: ''
         };
         expect(calc.initState()).toEqual(resultState);
     });

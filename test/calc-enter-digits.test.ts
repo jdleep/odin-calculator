@@ -1,5 +1,4 @@
 import * as calc from '../src/app'
-import Big from 'big.js';
 import { describe, test, expect } from "@jest/globals"
 import * as R from 'ramda';
 
@@ -15,6 +14,17 @@ describe('Digit Functions', () => {
         
         let resultState = R.clone(initialState)
         resultState.operands.currOperand = 11345;
+        
+        expect(calc.enterDigit('5')(initialState)).toEqual(resultState);
+    });
+    test('Enter digit with decimal buffer', () => {
+        let initialState = calc.initState();
+        initialState.operands.currOperand = 1134;
+        initialState.decimalBuffer = '.';
+
+        
+        let resultState = R.clone(initialState)
+        resultState.operands.currOperand = 1134.5;
         
         expect(calc.enterDigit('5')(initialState)).toEqual(resultState);
     });

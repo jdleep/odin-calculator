@@ -1,5 +1,4 @@
 import * as calc from '../src/app';
-import Big from 'big.js';
 import { describe, test, expect } from "@jest/globals"
 import * as R from 'ramda';
 
@@ -66,9 +65,9 @@ describe('Binary Operands', () => {
         initialState.operands.currOperand = 0;
     
         let resultState = R.clone(initialState);
-        resultState.operands.currOperand = Infinity;
+        resultState.operands.currOperand = -Infinity;
         resultState.operator = '';
-        resultState.operands.storedOperand = Infinity;
+        resultState.operands.storedOperand = -Infinity;
         resultState.isPostCalc = true;
     
         expect(calc.enterEquals('=')(initialState)).toEqual(resultState);
