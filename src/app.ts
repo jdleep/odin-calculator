@@ -109,18 +109,18 @@ const enterBinOp = (binOp: string) => (calcState: CalcState) => {
 
 // Unary Operators
 interface UnaryOps {
-    [i: string]: (a: number) => number;
+    [i: string]: (a: string) => string;
 };
 
 const unaryOps: UnaryOps = {
-    '+/-': (a: number) => -a,
-    '%': (a: number) => a / 100,
+    '+/-': (a: string) => String(-a),
+    '%': (a: string) => String(+a / 100),
 };
 
 const enterUnaryOp = (op: string) => (calcState: CalcState) => {
     return op in unaryOps 
-    ? R.set(currOpLens,        
-        unaryOps[op](R.view(currOpLens, calcState)),
+    ? R.set(dispValLens,        
+        unaryOps[op](R.view(dispValLens, calcState)),
         calcState
     )
     : calcState
