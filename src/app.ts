@@ -4,27 +4,24 @@ import * as RE from 'remeda';
 
 // State
 interface CalcState {
-    operands: Operands;
+    storedValue: string;
     operator: string;
-    displayStr: string;
+    displayValue: string;
     isPostCalc: boolean;
-    decimalBuffer: string;
+    hasDecimal: boolean;
 };
 
-interface Operands {
-    storedOperand: number;
-    currOperand: number;
-};
+// interface Operands {
+//     storedOperand: number;
+//     currOperand: number;
+// };
 
 const initState = (calc?: CalcState): CalcState => ({
-    operands: {
-        storedOperand: 0,
-        currOperand: 0
-    },
+    storedValue: '0',
     operator: '',
-    displayStr: '0',
+    displayValue: '0',
     isPostCalc: false,
-    decimalBuffer: ''
+    hasDecimal: false
 });
 
 let globalState: CalcState = initState();

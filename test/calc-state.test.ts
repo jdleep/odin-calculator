@@ -6,10 +6,11 @@ import * as R from 'ramda';
 describe('State functions', () => {
     test('initState', () => {
         const resultState = {
-            storedValue = '0',
-            displayValue = '0',
+            storedValue: '0',
+            displayValue: '0',
             operator: '',
             isPostCalc: false,
+            hasDecimal: false
         };
         expect(calc.initState()).toEqual(resultState);
     });
