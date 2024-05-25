@@ -1,7 +1,7 @@
 import Big from 'big.js';
 import * as R from 'ramda';
 import * as RE from 'remeda';
-import {CalcState, initState, binaryOps, unaryOps, enterUnaryOp, applyBinFun, calculate, enterBinOp, updDispStr, getEnterFun, enterEquals, enterClear, updateState, globalState, updateUiCalcVal, resetDecBuffer} from './app';
+import {CalcState, initState, binaryOps, unaryOps, enterUnaryOp, applyBinFun, calculate, enterBinOp, getEnterFun, enterEquals, enterClear, updateState, globalState, updateUiCalcVal} from './app';
 
 let el = document.querySelector('.calculator');
 

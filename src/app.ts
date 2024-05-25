@@ -138,9 +138,6 @@ const enterEquals = (eq: string) => (calcState: CalcState) =>
     )(calcState);
 
 // Decimal
-const hasDecBuffer = (calcState: CalcState) => 
-    !!R.view(decBufferLens, calcState);
-
 const enterDecimal = (decimal: string) => (calcState: CalcState) => {
     return /\./.test(R.view(dispValLens, calcState)) 
     ? calcState
@@ -148,11 +145,6 @@ const enterDecimal = (decimal: string) => (calcState: CalcState) => {
 };
 
 // UI
-const updDispStr = (calcState: CalcState) => 
-        R.set(dispLens,
-            R.view(currOpLens, calcState).toString() + getDecBuffer(calcState),
-            calcState);
-
 
 const getEnterFun: ((str: string) => ((c: CalcState) => CalcState)) = R.cond([
     [R.flip(R.has)(binaryOps), enterBinOp],
@@ -174,4 +166,4 @@ const updateUiCalcVal = (el: Element) => (calcState: CalcState) => {
 };
 
 
-export {CalcState, initState, enterChar, binaryOps, unaryOps, enterUnaryOp, applyBinFun, calculate, enterBinOp, updDispStr, getEnterFun, enterEquals, enterClear, updateState, updateUiCalcVal, enterDecimal, getDecBuffer, hasDecBuffer, resetDecBuffer, globalState}
+export {CalcState, initState, enterChar, binaryOps, unaryOps, enterUnaryOp, applyBinFun, calculate, enterBinOp, getEnterFun, enterEquals, enterClear, updateState, updateUiCalcVal, enterDecimal, globalState}
