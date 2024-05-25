@@ -1,7 +1,7 @@
 import Big from 'big.js';
 import * as R from 'ramda';
 import * as RE from 'remeda';
-import {CalcState, initState, appendDigit, enterDigit, binaryOps, unaryOps, enterUnaryOp, applyBinFun, calculate, enterBinOp, updDispStr, getEnterFun, enterEquals, enterClear, updateState, globalState, updateUiCalcVal, resetDecBuffer} from './app';
+import {CalcState, initState, binaryOps, unaryOps, enterUnaryOp, applyBinFun, calculate, enterBinOp, updDispStr, getEnterFun, enterEquals, enterClear, updateState, globalState, updateUiCalcVal, resetDecBuffer} from './app';
 
 let el = document.querySelector('.calculator');
 
@@ -12,13 +12,8 @@ if(el && el instanceof HTMLElement) {
             && e.target.tagName === 'BUTTON')
         R.pipe(
             getEnterFun(e.target.innerText),
-            resetDecBuffer,
-            updDispStr,
             updateState(globalState),
-            updateUiCalcVal(el),
             calcState => {
-                console.log(calcState.operands.currOperand.toString());
-                console.log(calcState.operands.storedOperand.toString());
                 console.log(calcState);
             }
         )(globalState);

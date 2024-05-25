@@ -13,7 +13,7 @@ describe('UI Methods', () => {
     });
     test('getEnterFun - digit', () => {
         expect(JSON.stringify(calc.getEnterFun('3')))
-        .toEqual(JSON.stringify(calc.enterDigit('3')));
+        .toEqual(JSON.stringify(calc.enterChar('3')));
     });
     test('getEnterFun - equals', () => {
         expect(JSON.stringify(calc.getEnterFun('=')))
