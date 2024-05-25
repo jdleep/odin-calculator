@@ -6,24 +6,19 @@ import * as R from 'ramda';
 describe('State functions', () => {
     test('initState', () => {
         const resultState = {
-            operands: {
-                storedOperand: 0,
-                currOperand: 0
-            },
+            storedValue = '0',
+            displayValue = '0',
             operator: '',
-            displayStr: '0',
             isPostCalc: false,
-            decimalBuffer: ''
         };
         expect(calc.initState()).toEqual(resultState);
     });
     test('updateState - object is modified', () => {
         let fakeGlobalState = calc.initState();
         let copyState = calc.initState();
-        copyState.operands.storedOperand = 23;
+        copyState.storedValue = '23';
         copyState.operator = '+';
-        copyState.operands.currOperand = 342;
-        copyState.displayStr = '342';
+        copyState.displayValue = '342';
 
         calc.updateState(fakeGlobalState)(copyState);
 
