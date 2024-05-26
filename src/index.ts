@@ -13,6 +13,7 @@ if(el && el instanceof HTMLElement) {
         R.pipe(
             getEnterFun(e.target.innerText),
             updateState(globalState),
+            updateUiCalcVal(el),
             calcState => {
                 console.log(calcState);
             }
