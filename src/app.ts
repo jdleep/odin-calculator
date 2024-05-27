@@ -128,6 +128,18 @@ const enterUnaryOp = (op: string) => (calcState: CalcState) => {
 // Clear
 const enterClear = (clear: string) => (calcState: CalcState) => initState();
 
+// Delete
+const zeroIfEmpty = (str: string) =>
+    str === ''
+    ? '0'
+    : str;
+
+const enterDelete = (del: string) => (calcState: CalcState) => 
+    R.over(dispValLens, 
+        R.pipe(RE.sliceString(0,-1), zeroIfEmpty),
+        calcState);
+
+
 // Equals
 const enterEquals = (eq: string) => (calcState: CalcState) => 
     R.pipe(
@@ -144,7 +156,6 @@ const enterDecimal = (decimal: string) => (calcState: CalcState) => {
 };
 
 // UI
-
 const getEnterFun: ((str: string) => ((c: CalcState) => CalcState)) = R.cond([
     [R.flip(R.has)(binaryOps), enterBinOp],
     [R.flip(R.has)(unaryOps), enterUnaryOp],
@@ -152,6 +163,7 @@ const getEnterFun: ((str: string) => ((c: CalcState) => CalcState)) = R.cond([
     [R.equals('='), enterEquals],
     [R.equals('A/C'), enterClear],
     [R.equals('.'), enterDecimal],
+    [R.equals('delete'), enterDelete],
     [R.T, R.always((calcState: CalcState): CalcState => calcState)]
 ]);
 
