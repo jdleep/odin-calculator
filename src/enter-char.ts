@@ -1,9 +1,11 @@
 import * as R from 'ramda';
 import {CalcState, dispValLens, isPostCalcLens} from './state';
 
-// Append or replace if zero value
+// Append or replace if zero value and entering digit
+const hasDigit = (str: string) => /\d/.test(str);
+
 const appRepZero = (char: string) => (str: string) => 
-    str === '0'
+    str === '0' && hasDigit(char)
     ? char
     : str + char;
 

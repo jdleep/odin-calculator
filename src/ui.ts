@@ -20,7 +20,6 @@ const getEnterFun: ((str: string) => ((c: CalcState) => CalcState)) = R.cond([
 ]);
 
 const updateUiCalcVal = (el: Element) => (calcState: CalcState) => {
-
     let calculatedValue = el.querySelector('.calculated-value') as HTMLElement;
     if (calculatedValue) {
         calculatedValue.innerText = R.view(dispValLens, calcState);
