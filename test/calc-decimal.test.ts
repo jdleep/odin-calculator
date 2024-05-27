@@ -1,24 +1,26 @@
-import * as calc from '../src/app'
+import { initState } from '../src/state';
+import { enterUnaryOp } from '../src/unary-op';
+import { enterDecimal } from '../src/misc';
 import { describe, test, expect } from "@jest/globals"
 import * as R from 'ramda';
 
 //todo test overflows
 describe('Decimal', () => {
     test('Enter decimal (current value is integer)', () => {
-        let initialState = calc.initState();
+        let initialState = initState();
         initialState.displayValue = '6125';
 
         let resultState = R.clone(initialState);
         resultState.displayValue = '6125.';
 
-        expect(calc.enterDecimal('.')(initialState)).toEqual(resultState);
+        expect(enterDecimal('.')(initialState)).toEqual(resultState);
     });
     test('Enter decimal (current value is not integer)', () => {
-        let initialState = calc.initState();
+        let initialState = initState();
         initialState.displayValue = '5.6';
 
         let resultState = R.clone(initialState);
 
-        expect(calc.enterUnaryOp('.')(initialState)).toEqual(resultState);
+        expect(enterUnaryOp('.')(initialState)).toEqual(resultState);
     });
 });

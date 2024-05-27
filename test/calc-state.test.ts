@@ -1,4 +1,4 @@
-import * as calc from '../src/app'
+import { initState, updateState } from "../src/state";
 import { describe, test, expect } from "@jest/globals"
 import * as R from 'ramda';
 
@@ -11,16 +11,16 @@ describe('State functions', () => {
             operator: '',
             isPostCalc: false
         };
-        expect(calc.initState()).toEqual(resultState);
+        expect(initState()).toEqual(resultState);
     });
     test('updateState - object is modified', () => {
-        let fakeGlobalState = calc.initState();
-        let copyState = calc.initState();
+        let fakeGlobalState = initState();
+        let copyState = initState();
         copyState.storedValue = '23';
         copyState.operator = '+';
         copyState.displayValue = '342';
 
-        calc.updateState(fakeGlobalState)(copyState);
+        updateState(fakeGlobalState)(copyState);
 
         expect(fakeGlobalState).toBe(fakeGlobalState);
         expect(fakeGlobalState).toEqual(copyState);

@@ -1,4 +1,6 @@
-import * as calc from '../src/app';
+import { binaryOps, calculate, enterBinOp } from '../src/binary-op';
+import { enterEquals } from '../src/misc';
+import { initState } from '../src/state';
 import { describe, test, expect } from "@jest/globals"
 import * as R from 'ramda';
 
@@ -6,25 +8,25 @@ import * as R from 'ramda';
 describe('binaryOps', () => {
     test('Binary Op: +', () => {
         expect(
-            calc.binaryOps['+']('3245', '4250')
+            binaryOps['+']('3245', '4250')
         )
         .toEqual('7495');
     });
     test('Binary Op: -', () => {
         expect(
-            calc.binaryOps['-']('526', '610524')
+            binaryOps['-']('526', '610524')
         )
         .toEqual('-609998');
     });
     test('Binary Op: *', () => {
         expect(
-            calc.binaryOps['*']('435', '6214')
+            binaryOps['*']('435', '6214')
         )
         .toEqual('2703090');
     });
     test('Binary Op: /', () => {
         expect(
-            calc.binaryOps['/']('12', '0.5')
+            binaryOps['/']('12', '0.5')
         )
         .toEqual('24');
     });
@@ -32,7 +34,7 @@ describe('binaryOps', () => {
 
 describe('Binary Operands', () => {
     test('Calculate: +', () => {
-        let initialState = calc.initState();
+        let initialState = initState();
         initialState.storedValue = '23';
         initialState.operator = '+';
         initialState.displayValue = '342';
@@ -42,10 +44,10 @@ describe('Binary Operands', () => {
         resultState.displayValue = '365';
         resultState.isPostCalc = true;
 
-        expect(calc.calculate(initialState)).toEqual(resultState);
+        expect(calculate(initialState)).toEqual(resultState);
     });
     test('enterBinOp: +', () => {
-        let initialState = calc.initState();
+        let initialState = initState();
         initialState.storedValue = '52';
         initialState.operator = '+';
         initialState.displayValue = '3432';
@@ -56,10 +58,10 @@ describe('Binary Operands', () => {
         resultState.storedValue = '3484';
         resultState.isPostCalc = true;
     
-        expect(calc.enterBinOp('-')(initialState)).toEqual(resultState);
+        expect(enterBinOp('-')(initialState)).toEqual(resultState);
     });
     test('Divide by zero', () => {
-        let initialState = calc.initState();
+        let initialState = initState();
         initialState.storedValue = '-521';
         initialState.operator = '/';
         initialState.displayValue = '0';
@@ -70,14 +72,14 @@ describe('Binary Operands', () => {
         resultState.storedValue = '-Infinity';
         resultState.isPostCalc = true;
     
-        expect(calc.enterEquals('=')(initialState)).toEqual(resultState);
+        expect(enterEquals('=')(initialState)).toEqual(resultState);
     });
 });
 
 
 describe('enterEquals', () => {
     test('enterEquals: +', () => {
-        let initialState = calc.initState();
+        let initialState = initState();
         initialState.storedValue = '253';
         initialState.operator = '+';
         initialState.displayValue = '67';
@@ -88,6 +90,6 @@ describe('enterEquals', () => {
         resultState.storedValue = '320';
         resultState.isPostCalc = true;
     
-        expect(calc.enterEquals('=')(initialState)).toEqual(resultState);
+        expect(enterEquals('=')(initialState)).toEqual(resultState);
     });
 });
