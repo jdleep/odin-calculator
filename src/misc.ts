@@ -13,24 +13,31 @@ const zeroIfEmpty = (str: string) =>
     ? '0'
     : str;
 
-const enterDelete = (del: string) => (calcState: CalcState) => 
+const enterDelete = (_: string) => (calcState: CalcState) => 
     R.over(dispValLens, 
         R.pipe(RE.sliceString(0,-1), zeroIfEmpty),
         calcState);
 
 // Equals
-const enterEquals = (eq: string) => (calcState: CalcState) => 
+const enterEquals = (_: string) => (calcState: CalcState) => 
     R.pipe(
         calculate,
         R.set(opLens, ''),
         copyToStoredOp
     )(calcState);
 
-// Decimal
-const enterDecimal = (decimal: string) => (calcState: CalcState) => {
-    return /\./.test(R.view(dispValLens, calcState)) 
+// Generic enterCharNotExist
+const enterCharIfNotIn = (char: string) => (decimal: string) => 
+    (calcState: CalcState) => {
+    return R.view(dispValLens, calcState).includes(char) 
     ? calcState
-    : enterChar('.')(calcState);
+    : enterChar(char)(calcState);
 };
 
-export {enterEquals, enterClear, enterDecimal, enterDelete};
+// Decimal
+const enterDecimal = enterCharIfNotIn('.');
+
+// Exponent
+const enterExp = enterCharIfNotIn('e');
+
+export {enterEquals, enterClear, enterDecimal, enterDelete, enterExp};

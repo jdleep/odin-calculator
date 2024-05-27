@@ -1,5 +1,4 @@
 import { initState } from '../src/state';
-import { enterUnaryOp } from '../src/unary-op';
 import { enterDecimal } from '../src/misc';
 import { describe, test, expect } from "@jest/globals"
 import * as R from 'ramda';
@@ -21,6 +20,6 @@ describe('Decimal', () => {
 
         let resultState = R.clone(initialState);
 
-        expect(enterUnaryOp('.')(initialState)).toEqual(resultState);
+        expect(enterDecimal('.')(initialState)).toEqual(resultState);
     });
 });
