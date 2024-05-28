@@ -28,4 +28,19 @@ const updateUiCalcVal = (el: Element) => (calcState: CalcState) => {
 };
 
 
-export { getEnterFun, updateUiCalcVal };
+const formatVal = (a: number) => {
+    return a.toString().length > 18
+    ? a.toPrecision(18)
+    : a.toString();
+};
+
+const formatDispVal = (calcState: CalcState) => {
+    return R.over(dispValLens,
+        R.pipe(Number,
+            formatVal
+        ),
+        calcState
+    )
+}
+
+export { getEnterFun, updateUiCalcVal, formatDispVal };

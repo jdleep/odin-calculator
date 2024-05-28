@@ -1,5 +1,5 @@
 import * as R from 'ramda';
-import {getEnterFun, updateUiCalcVal} from './ui';
+import {formatDispVal, getEnterFun, updateUiCalcVal} from './ui';
 import {updateState, globalState} from './state';
 
 let el = document.querySelector('.calculator') as HTMLElement;
@@ -10,6 +10,7 @@ el.addEventListener('click', (e) => {
         && e.target.tagName === 'BUTTON')
     R.pipe(
         getEnterFun(e.target.innerText),
+        // formatDispVal,
         updateState(globalState),
         updateUiCalcVal(el),
         calcState => {
