@@ -17,4 +17,7 @@ const handleError = (calcState: CalcState) => {
     : calcState
 }
 
-export { handleError };
+const hasError = (calcState: CalcState) => 
+    R.view(dispValLens, calcState) === 'Error';
+
+export { handleError, hasError };

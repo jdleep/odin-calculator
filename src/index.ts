@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 import {formatDispVal, getEnterFun, updateUiCalcVal} from './ui';
-import {updateState, globalState} from './state';
-import { handleError } from './handle-error';
+import {updateState, globalState, initState} from './state';
+import { handleError, hasError } from './handle-error';
 
 let el = document.querySelector('.calculator') as HTMLElement;
 
@@ -10,8 +10,12 @@ el.addEventListener('click', (e) => {
         && e.target instanceof HTMLElement 
         && e.target.tagName === 'BUTTON')
     R.pipe(
-        getEnterFun(e.target.innerText),
-        handleError,
+        R.cond([
+            [hasError, initState],
+            [R.T, R.pipe(
+                getEnterFun(e.target.innerText),
+                handleError)]
+        ]),
         updateState(globalState),
         updateUiCalcVal(el),
         calcState => {
