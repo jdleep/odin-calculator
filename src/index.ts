@@ -18,9 +18,6 @@ el.addEventListener('click', (e) => {
         ]),
         updateState(globalState),
         updateUiCalcVal(el),
-        calcState => {
-            console.log(calcState);
-        }
     )(globalState);
 });
 
