@@ -6,8 +6,8 @@ interface UnaryOps {
 };
 
 const unaryOps: UnaryOps = {
-    '+/-': (a: string) => String(-a),
-    '%': (a: string) => String(+a / 100),
+    '+/-': (a: string) => String(-parseFloat(a)),
+    '%': (a: string) => String(parseFloat(a) / 100),
 };
 
 const enterUnaryOp = (op: string) => (calcState: CalcState) => {

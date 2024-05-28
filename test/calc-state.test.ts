@@ -1,6 +1,5 @@
 import { initState, updateState } from "../src/state";
 import { describe, test, expect } from "@jest/globals"
-import * as R from 'ramda';
 
 //todo test overflows
 describe('State functions', () => {

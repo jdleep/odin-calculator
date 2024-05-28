@@ -10,7 +10,7 @@ describe('Digit Functions', () => {
         initialState.displayValue = '1134';
 
         
-        let resultState = R.clone(initialState)
+        let resultState = R.clone(initialState);
         resultState.displayValue = '11345';
         
         expect(enterChar('5')(initialState)).toEqual(resultState);
@@ -20,7 +20,7 @@ describe('Digit Functions', () => {
         initialState.displayValue = '0';
 
         
-        let resultState = R.clone(initialState)
+        let resultState = R.clone(initialState);
         resultState.displayValue = '0';
         
         expect(enterChar('0')(initialState)).toEqual(resultState);        
@@ -38,4 +38,12 @@ describe('Digit Functions', () => {
         
         expect(enterChar('4')(initialState)).toEqual(resultState);        
     });
+
+    test('Limit string length to 20 chars', () => {
+        let initialState = initState();
+        initialState.displayValue = '12345678901234567890';
+
+        let resultState = R.clone(initialState);
+        expect(enterChar('9')(initialState)).toEqual(resultState);
+    })
 });

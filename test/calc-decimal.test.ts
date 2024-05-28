@@ -22,4 +22,13 @@ describe('Decimal', () => {
 
         expect(enterDecimal('.')(initialState)).toEqual(resultState);
     });
+    test('Enter decimal when displayValue = 0', () => {
+        let initialState = initState();
+        initialState.displayValue = '0';
+
+        let resultState = R.clone(initialState);
+        resultState.displayValue = '0.';
+
+        expect(enterDecimal('.')(initialState)).toEqual(resultState);
+    });
 });

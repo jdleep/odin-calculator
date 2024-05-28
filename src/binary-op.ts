@@ -8,10 +8,10 @@ interface BinaryOps {
 };
 
 const binaryOps: BinaryOps = {
-    '+': (a: string, b: string) => String(+a + +b),
-    '-': (a: string, b: string) => String(+a - +b),
-    '*': (a: string, b: string) => String(+a * +b),
-    '/': (a: string, b: string) => String(+a / +b)
+    '+': (a: string, b: string) => String(parseFloat(a) + parseFloat(b)),
+    '-': (a: string, b: string) => String(parseFloat(a) - parseFloat(b)),
+    '*': (a: string, b: string) => String(parseFloat(a) * parseFloat(b)),
+    '/': (a: string, b: string) => String(parseFloat(a) / parseFloat(b))
 };
 
 const applyBinFun = (fun: (a: string, b: string) => string) => 
